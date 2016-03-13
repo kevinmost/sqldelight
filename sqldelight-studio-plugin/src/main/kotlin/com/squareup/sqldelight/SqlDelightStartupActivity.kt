@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.squareup.sqldelight.component.PluginOutOfDateComponent
 import com.squareup.sqldelight.lang.SqlDelightFileViewProvider
 import com.squareup.sqldelight.lang.SqliteContentIterator
 import com.squareup.sqldelight.lang.SqliteFile
@@ -48,5 +49,10 @@ class SqlDelightStartupActivity : StartupActivity {
         })
       }
     }
+
+    // Technically this should be defined in plugin.xml as a plugin component, but since
+    // it performs PSI logic, it needs to be ran after startup. Running the main body
+    // here eliminates race conditions with this class.
+    PluginOutOfDateComponent(project).projectOpened()
   }
 }
